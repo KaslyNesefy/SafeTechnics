@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TabletLevelMenu : MonoBehaviour
+public class LevelsMenuTablet : MonoBehaviour
 {
     public Text textWatchTimer;
     public Text textCalendarWatch;
@@ -24,38 +24,45 @@ public class TabletLevelMenu : MonoBehaviour
 
     public AudioSource notificationSound;
     //player modes
-    private int playerModeStartMenu = PlayerBehavior.playerModeStartMenu;
-    private int playerModeLevelsMenu = PlayerBehavior.playerModeLevelsMenu;
-    private int playerModeLevelWellDone = PlayerBehavior.playerModeLevelWellDone;
-    private int playerModeLevelOutOfTime = PlayerBehavior.playerModeLevelOutOfTime;
-    private int playerModeLevelInterrupted = PlayerBehavior.playerModeLevelInterrupted;
+    //private int playerModeStartMenu = Player.playerModeStartMenu;
+    //private int playerModeLevelsMenu = Player.playerModeLevelsMenu;
+    //private int playerModeLevelWellDone = Player.playerModeLevelWellDone;
+    //private int playerModeLevelOutOfTime = Player.playerModeLevelOutOfTime;
+    //private int playerModeLevelInterrupted = Player.playerModeLevelInterrupted;
+    private StateMenu_Start _stateMenu_Start;
+    private StateMenu_Levels _stateMenu_Levels;
+    private StateLevelEnd_WellDone _stateLevelEnd_WellDone;
+    private StateLevelEnd_OutOfTime _stateLevelEnd_OutOfTime;
+    private StateLevelEnd_InterruptedByPlayer _stateLevelEnd_InterruptedByPlayer;
     //level states
     private bool levelNotStarted = true;
     private bool levelAnywayEnded = false;
 
-    private void Start() => panelPauseMenu.SetActive(false);
+    private void Start()
+    {
+        panelPauseMenu.SetActive(false);
+    }
 
     private void FixedUpdate()
     {
-
         //Levels starts only. DONT DO THERE ANYTHIN ELSE *******
         if (levelNotStarted)
         {
-            switch (player.GetComponent<PlayerBehavior>().playerMode)
+            switch (player.GetComponent<Player>().GetCurrentState())
             {
-                case 1: { Level1Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //1 Level Start
-                case 2: { Level2Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //2 Level Start
-                case 3: { Level3Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //3 Level Start
-                case 4: { Level4Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //4 Level Start
-                case 5: { Level5Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //5 Level Start
+                case StateLevel_1: { Level1Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //1 Level Start
+                                                                                                               //case 2: { Level2Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //2 Level Start
+                                                                                                               //case 3: { Level3Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //3 Level Start
+                                                                                                               //case 4: { Level4Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //4 Level Start
+                                                                                                               //case 5: { Level5Spawn(); levelNotStarted = false; levelAnywayEnded = true; break; } //5 Level Start
             }
         }
 
-        //Leve-Timer-LevelEnd Players mode switcher
-        switch (player.GetComponent<PlayerBehavior>().playerMode)
+        //Leave-Timer-LevelEnd Players mode switcher
+        switch (player.GetComponent<Player>().GetCurrentState())
         {
             //LevelsMenu
-            case 0:
+            case StateMenu_Levels:
                 {
                     textWayEnum.text = "Для выбора уровня нажмите\n" +
                                        "соответствующую цифру\n" +
@@ -76,30 +83,49 @@ public class TabletLevelMenu : MonoBehaviour
                     break;
                 }
             //Levels
-            case 1: { WorkableLevelTimer(); break; }
-            case 2: { WorkableLevelTimer(); break; }
-            case 3: { WorkableLevelTimer(); break; }
+            case StateLevel_1:
+                {
+                    WorkableLevelTimer();
+                    break;
+                }
+            //case 2: { WorkableLevelTimer(); break; }
+            //case 3: { WorkableLevelTimer(); break; }
             //case 4: { if (player.GetComponent<Level4Logic>().phase < 3) { WorkableLevelTimer(); } break; }
             //case 5: { if (player.GetComponent<Level5Logic>().phase < 3) { WorkableLevelTimer(); } break; }
             //playerModeLevelInterrupted
-            case 99995:
+            case StateLevelEnd_InterruptedByPlayer:
                 {
-                    if (levelAnywayEnded) { LevelInterrupted(); levelAnywayEnded = false; }
-                    if (Input.GetKeyDown(KeyCode.E)) { player.GetComponent<PlayerBehavior>().playerMode = playerModeLevelsMenu; }
+                    if (levelAnywayEnded)
+                    {
+                        LevelInterrupted();
+                        levelAnywayEnded = false;
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                        player.GetComponent<Player>().SetNewState(_stateMenu_Levels);
                     break;
                 }
             //playerModeOutOfTime
-            case 99996:
+            case StateLevelEnd_OutOfTime:
                 {
-                    if (levelAnywayEnded) { RanOutOfTime(); levelAnywayEnded = false; }
-                    if (Input.GetKeyDown(KeyCode.E)) { player.GetComponent<PlayerBehavior>().playerMode = playerModeLevelsMenu; }
+                    if (levelAnywayEnded)
+                    {
+                        RanOutOfTime();
+                        levelAnywayEnded = false;
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                        player.GetComponent<Player>().SetNewState(_stateMenu_Levels);
                     break;
                 }
             //playerModeLevelDone
-            case 99997:
+            case StateLevelEnd_WellDone:
                 {
-                    if (levelAnywayEnded) { WellDoneLevel(); levelAnywayEnded = false; }
-                    if (Input.GetKeyDown(KeyCode.E)) { player.GetComponent<PlayerBehavior>().playerMode = playerModeLevelsMenu; }
+                    if (levelAnywayEnded)
+                    {
+                        WellDoneLevel();
+                        levelAnywayEnded = false;
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                        player.GetComponent<Player>().SetNewState(_stateMenu_Levels);
                     break;
                 }
         }
@@ -155,15 +181,15 @@ public class TabletLevelMenu : MonoBehaviour
         //If ran out of time
         if (timerInt == 0)
         {
-            switch (player.GetComponent<PlayerBehavior>().playerMode)
-            {
-                case 1: { player.GetComponent<Level1Logic>().enabled = false; break; }
-                case 2: { player.GetComponent<Level2Logic>().enabled = false; break; }
-                case 3: { player.GetComponent<Level3Logic>().enabled = false; break; }
-                case 4: { player.GetComponent<Level4Logic>().enabled = false; break; }
-                case 5: { player.GetComponent<Level5Logic>().enabled = false; break; }
-            }
-            player.GetComponent<PlayerBehavior>().playerMode = playerModeLevelOutOfTime;
+            //switch (player.GetComponent<Player>().GetCurrentState())
+            //{
+                //case StateLevel_1: { player.GetComponent<Level1Logic>().enabled = false; break; }
+                //case 2: { player.GetComponent<Level2Logic>().enabled = false; break; }
+                //case 3: { player.GetComponent<Level3Logic>().enabled = false; break; }
+                //case 4: { player.GetComponent<Level4Logic>().enabled = false; break; }
+                //case 5: { player.GetComponent<Level5Logic>().enabled = false; break; }
+            //}
+            player.GetComponent<Player>().SetNewState(_stateLevelEnd_OutOfTime);
         }
 
     }

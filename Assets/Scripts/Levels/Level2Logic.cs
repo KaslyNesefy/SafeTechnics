@@ -11,51 +11,50 @@ public class Level2Logic : LevelLogic, ILevelLogic
     public GameObject pc;
     public GameObject screen;
 
-    public void OnEnable()
-    {
-        window1.GetComponent<IObjectBehaviour>().Activate(); //Windows
-        window2.GetComponent<IObjectBehaviour>().Activate();
-        window3.GetComponent<IObjectBehaviour>().Activate();
-        printer.GetComponent<IObjectBehaviour>().Deactivate(); //Printer
-        chair.GetComponent<IObjectBehaviour>().Deactivate(); //Chair
-        lightSwitch.GetComponent<IObjectBehaviour>().Deactivate(); //LightSwitch
-        pc.GetComponent<IObjectBehaviour>().Deactivate(); //PC
-        screen.GetComponent<IObjectBehaviour>().Deactivate();
-    }
-
     public void OnDisable()
     {
         TextOut();
 
-        window1.GetComponent<IObjectBehaviour>().Activate(); //Windows
-        window2.GetComponent<IObjectBehaviour>().Activate();
-        window3.GetComponent<IObjectBehaviour>().Activate();
-        printer.GetComponent<IObjectBehaviour>().Deactivate(); //Printer
-        chair.GetComponent<IObjectBehaviour>().Deactivate(); //Chair
-        lightSwitch.GetComponent<IObjectBehaviour>().Deactivate(); //LightSwitch
-        pc.GetComponent<IObjectBehaviour>().Deactivate(); //PC
-        screen.GetComponent<IObjectBehaviour>().Deactivate();
+        window1.GetComponent<IBehaviour_Activatable>().Activate(); //Windows
+        window2.GetComponent<IBehaviour_Activatable>().Activate();
+        window3.GetComponent<IBehaviour_Activatable>().Activate();
+        printer.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //Printer
+        chair.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //Chair
+        lightSwitch.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //LightSwitch
+        pc.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //PC
+        screen.GetComponent<IBehaviour_Deactivatable>().Deactivate();
+    }
+    public void OnEnable()
+    {
+        window1.GetComponent<IBehaviour_Activatable>().Activate(); //Windows
+        window2.GetComponent<IBehaviour_Activatable>().Activate();
+        window3.GetComponent<IBehaviour_Activatable>().Activate();
+        printer.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //Printer
+        chair.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //Chair
+        lightSwitch.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //LightSwitch
+        pc.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //PC
+        screen.GetComponent<IBehaviour_Deactivatable>().Deactivate();
     }
 
     public void FixedUpdate()
     {
         if (GetComponent<Level2Logic>().enabled) { GetComponent<Level2Logic>().enabled = PauseMenuAct(); };
 
-        TextWayCheck(printer.GetComponent<IObjectBehaviour>().isActivated,
-                     pc.GetComponent<IObjectBehaviour>().isActivated,
-                     chair.GetComponent<IObjectBehaviour>().isActivated,
-                     !window1.GetComponent<IObjectBehaviour>().isActivated && !window2.GetComponent<IObjectBehaviour>().isActivated && !window3.GetComponent<IObjectBehaviour>().isActivated,
-                     lightSwitch.GetComponent<IObjectBehaviour>().isActivated);
+        TextWayCheck(printer.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),
+                     pc.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),
+                     chair.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),    
+                     !window1.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() && !window2.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() && !window3.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),
+                     lightSwitch.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation());
 
-        if (!window1.GetComponent<IObjectBehaviour>().isActivated &&
-            !window2.GetComponent<IObjectBehaviour>().isActivated &&
-            !window3.GetComponent<IObjectBehaviour>().isActivated &&
-            printer.GetComponent<IObjectBehaviour>().isActivated &&
-            chair.GetComponent<IObjectBehaviour>().isActivated &&
-            lightSwitch.GetComponent<IObjectBehaviour>().isActivated &&
-            pc.GetComponent<IObjectBehaviour>().isActivated)//Completing condition
+        if (!window1.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            !window2.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            !window3.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            printer.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            chair.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            lightSwitch.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            pc.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation())//Completing condition
         {
-            if (GetComponent<Level2Logic>().enabled) { GetComponent<Level2Logic>().enabled = LevelEnd(); };
+            //if (GetComponent<Level2Logic>().enabled) { GetComponent<Level2Logic>().enabled = LevelEnd(); };
         }
     }
 }

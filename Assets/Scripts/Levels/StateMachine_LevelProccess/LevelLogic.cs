@@ -47,7 +47,7 @@ public class LevelLogic : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R))
             {
                 panelPauseMenu.SetActive(false);
-                player.GetComponent<PlayerBehavior>().playerMode = PlayerBehavior.playerModeLevelInterrupted;
+                //player.GetComponent<Player>().playerMode = Player.playerModeLevelInterrupted;
                 return false;
             }
             if (Input.GetKeyDown(KeyCode.Q)) { panelPauseMenu.SetActive(false); }
@@ -56,5 +56,5 @@ public class LevelLogic : MonoBehaviour
         else { return true; }
     }
 
-    public bool LevelEnd() { player.GetComponent<PlayerBehavior>().playerMode = PlayerBehavior.playerModeLevelWellDone; return false; }
+    //public bool LevelEnd() { player.GetComponent<Player>().playerMode = Player.playerModeLevelWellDone; return false; }
 }

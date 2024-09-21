@@ -46,7 +46,7 @@ public class Level5Logic : MonoBehaviour
                 }
             case 3://End
                 {
-                    player.GetComponent<PlayerBehavior>().playerMode = PlayerBehavior.playerModeLevelWellDone;
+                    //player.GetComponent<Player>().playerMode = Player.playerModeLevelWellDone;
                     GetComponent<Level1Logic>().enabled = false;
                     phase = 1;
                     break;

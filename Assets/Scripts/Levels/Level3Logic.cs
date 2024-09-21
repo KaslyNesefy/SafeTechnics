@@ -17,55 +17,55 @@ public class Level3Logic : LevelLogic, ILevelLogic
     {
         TextOut();
 
-        window1.GetComponent<IObjectBehaviour>().Deactivate(); //Windows
-        window2.GetComponent<IObjectBehaviour>().Deactivate();
-        window3.GetComponent<IObjectBehaviour>().Deactivate();
-        mainSwitch.GetComponent<IObjectBehaviour>().Activate(); //Printer
-        alarm.GetComponent<IObjectBehaviour>().Deactivate(); //LightSwitch
-        pc.GetComponent<IObjectBehaviour>().Deactivate(); //PC
-        pc.GetComponent<IObjectBehaviour>().isBurning = false;
+        window1.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //Windows
+        window2.GetComponent<IBehaviour_Deactivatable>().Deactivate();
+        window3.GetComponent<IBehaviour_Deactivatable>().Deactivate();
+        mainSwitch.GetComponent<IBehaviour_Activatable>().Activate(); //Printer
+        alarm.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //LightSwitch
+        pc.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //PC
+        pc.GetComponent<IBehaviour_Extinguishable>().Extinguish();
         fireSoundPc.Stop();
-        screen.GetComponent<IObjectBehaviour>().Deactivate();
-        fireExtinguisherPlace.GetComponent<IObjectBehaviour>().Deactivate();// shit to place
-        door.GetComponent<IObjectBehaviour>().Deactivate();
+        screen.GetComponent<IBehaviour_Deactivatable>().Deactivate();
+        fireExtinguisherPlace.GetComponent<IBehaviour_Deactivatable>().Deactivate();// shit to place
+        door.GetComponent<IBehaviour_Deactivatable>().Deactivate();
     }
 
     public void OnEnable()
     {
-        window1.GetComponent<IObjectBehaviour>().Activate(); //Windows
-        window2.GetComponent<IObjectBehaviour>().Activate();
-        window3.GetComponent<IObjectBehaviour>().Activate();
-        mainSwitch.GetComponent<IObjectBehaviour>().Activate(); //Printer
-        alarm.GetComponent<IObjectBehaviour>().Deactivate(); //LightSwitch
-        pc.GetComponent<IObjectBehaviour>().Deactivate(); //PC
-        pc.GetComponent<IObjectBehaviour>().isBurning = true;
+        window1.GetComponent<IBehaviour_Activatable>().Activate(); //Windows
+        window2.GetComponent<IBehaviour_Activatable>().Activate();
+        window3.GetComponent<IBehaviour_Activatable>().Activate();
+        mainSwitch.GetComponent<IBehaviour_Activatable>().Activate(); //Printer
+        alarm.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //LightSwitch
+        pc.GetComponent<IBehaviour_Deactivatable>().Deactivate(); //PC
+        pc.GetComponent<IBehaviour_Burnable>().Burn();
         fireSoundPc.Play();
-        screen.GetComponent<IObjectBehaviour>().Activate();
-        fireExtinguisherPlace.GetComponent<IObjectBehaviour>().Deactivate();// shit to place
-        door.GetComponent<IObjectBehaviour>().Deactivate();
+        screen.GetComponent<IBehaviour_Activatable>().Activate();
+        fireExtinguisherPlace.GetComponent<IBehaviour_Deactivatable>().Deactivate();// shit to place
+        door.GetComponent<IBehaviour_Deactivatable>().Deactivate();
     }
 
     public void FixedUpdate()
     {
         if (GetComponent<Level3Logic>().enabled) { GetComponent<Level3Logic>().enabled = PauseMenuAct(); };
 
-        TextWayCheck(alarm.GetComponent<IObjectBehaviour>().isActivated,
-                     !mainSwitch.GetComponent<IObjectBehaviour>().isActivated,
-                     !window1.GetComponent<IObjectBehaviour>().isActivated && 
-                     !window2.GetComponent<IObjectBehaviour>().isActivated && 
-                     !window3.GetComponent<IObjectBehaviour>().isActivated,
-                     !pc.GetComponent<IObjectBehaviour>().isBurning, 
-                     door.GetComponent<IObjectBehaviour>().isActivated);
+        TextWayCheck(alarm.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),
+                     !mainSwitch.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),
+                     !window1.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+                     !window2.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+                     !window3.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation(),
+                     !pc.GetComponent<IBehaviour_StatusBurning>().GetStatusBurning(),
+                     door.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation());
 
-        if (!window1.GetComponent<IObjectBehaviour>().isActivated &&
-            !window2.GetComponent<IObjectBehaviour>().isActivated &&
-            !window3.GetComponent<IObjectBehaviour>().isActivated &&
-            !mainSwitch.GetComponent<IObjectBehaviour>().isActivated &&
-            !pc.GetComponent<IObjectBehaviour>().isBurning &&
-            alarm.GetComponent<IObjectBehaviour>().isActivated &&
-            door.GetComponent<IObjectBehaviour>().isActivated)//Completing condition
+        if (!window1.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            !window2.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            !window3.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            !mainSwitch.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation() &&
+            !pc.GetComponent<IBehaviour_StatusBurning>().GetStatusBurning() &&
+            alarm.GetComponent<IBehaviour_StatusBurning>().GetStatusBurning() &&
+            door.GetComponent<IBehaviour_StatusActivation>().GetStatusActivation())//Completing condition
         {
-            if (GetComponent<Level3Logic>().enabled) { GetComponent<Level3Logic>().enabled = LevelEnd(); };
+            //if (GetComponent<Level3Logic>().enabled) { GetComponent<Level3Logic>().enabled = LevelEnd(); };
         }
     }
 }
